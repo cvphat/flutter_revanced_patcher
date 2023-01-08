@@ -1,0 +1,59 @@
+group 'com.cvphat.flutterrevancedpatcher'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.6.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            url = uri("https://maven.pkg.github.com/revanced/revanced-patcher")
+            credentials {
+                username = (project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")) as String
+                password = (project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")) as String
+            }
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 33
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 26
+    }
+}
+
+dependencies {
+    // ReVanced
+    implementation "app.revanced:revanced-patcher:6.4.0"
+}
